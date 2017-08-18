@@ -29,8 +29,10 @@ var (
 	characteresDigitVerified = [...]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E",
 		"F", "G", "H", "I", "J", "K", "L", "M", "N", "Ñ", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
 
-	conpoundNames = [...]string{"DA", "DAS", "DE", "DEL", "DER", "DI", "DIE", "DD", "EL", "LA", "LOS",
-		"LAS", "LE", "LES", "MAC", "MC", "VAN", "VON", "Y"}
+	conpoundNames = [...]string{"DA", "DAS", "DE", "DEL", "DER", "DI", "DIE", "DD", "EL", "LA", "LOS", "LAS", "LE", "LES", "MAC", "MC", "VAN", "VON", "Y"}
+
+	// Official codes: https://es.wikipedia.org/wiki/ISO_3166-2:MX
+	stateCodes = [...]string{"AS", "BC", "BS", "CC", "CL", "CM", "CS", "CH", "DF", "DG", "GT", "GR", "HG", "JC", "MC", "MN", "MS", "NT", "NL", "OC", "PL", "QT", "QR", "SP", "SL", "SR", "TC", "TS", "TL", "VZ", "YN", "ZS"}
 )
 
 type curp struct {
@@ -57,10 +59,10 @@ func NewCurp(name, firstLastName, secondLastName, sex, stateCode, birthDate stri
 		birthDate:      birthDate,
 	}
 
-	curp.create()
+	curp.generate()
 }
 
-func (c curp) create() string {
+func (c curp) generate() string {
 	return c.birthDate
 }
 
