@@ -60,3 +60,15 @@ func TestStripCtlAndExtFromUnicode(t *testing.T) {
 		}
 	}
 }
+
+func TestIsValidSex(t *testing.T) {
+	if isValid := isValidSex("M"); isValid != true {
+		t.Errorf("invalid sex %t", isValid)
+	}
+	if isValid := isValidSex("H"); isValid != true {
+		t.Errorf("invalid sex %t", isValid)
+	}
+	if isValid := isValidSex("X"); isValid != false {
+		t.Errorf("invalid sex %t", isValid)
+	}
+}

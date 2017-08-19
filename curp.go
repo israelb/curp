@@ -22,6 +22,7 @@ var (
 		"KOJI", "VAKA", "KOJO", "VUEI", "KOLA", "VUEY", "KULO", "WUEI", "LILO", "WUEY",
 		"LOCA"}
 
+	// Official codes: https://es.wikipedia.org/wiki/ISO_3166-2:MX
 	codeStates = [...]string{"AS", "BC", "BS", "CC", "CS", "CH", "CL", "CM", "DF", "DG",
 		"GT", "GR", "HG", "JC", "MC", "MN", "MS", "NT", "NL", "OC", "PL", "QT",
 		"QR", "SP", "SL", "SR", "TC", "TS", "TL", "VZ", "YN", "ZS", "NE"}
@@ -30,9 +31,6 @@ var (
 		"F", "G", "H", "I", "J", "K", "L", "M", "N", "Ñ", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
 
 	conpoundNames = [...]string{"DA", "DAS", "DE", "DEL", "DER", "DI", "DIE", "DD", "EL", "LA", "LOS", "LAS", "LE", "LES", "MAC", "MC", "VAN", "VON", "Y"}
-
-	// Official codes: https://es.wikipedia.org/wiki/ISO_3166-2:MX
-	stateCodes = [...]string{"AS", "BC", "BS", "CC", "CL", "CM", "CS", "CH", "DF", "DG", "GT", "GR", "HG", "JC", "MC", "MN", "MS", "NT", "NL", "OC", "PL", "QT", "QR", "SP", "SL", "SR", "TC", "TS", "TL", "VZ", "YN", "ZS"}
 )
 
 type curp struct {
@@ -137,6 +135,13 @@ func validState(state string) bool {
 	}
 
 	return isValid
+}
+
+func isValidSex(sex string) bool {
+	if sex == "M" || sex == "H" {
+		return true
+	}
+	return false
 }
 
 // Advanced Unicode normalization and filtering,
