@@ -144,6 +144,24 @@ func isValidSex(sex string) bool {
 	return false
 }
 
+// Funcion que extrae la inicial del primer nombre, o, si tiene mas de 1 nombre Y el primer
+// nombre es uno de la lista de nombres comunes, la inicial del segundo nombre
+// @param {string} nombre - String que representa todos los nombres (excepto los apellidos) separados por espacio
+func getInitial(fullName string) string {
+	fullName = strings.ToUpper(fullName)
+	names := strings.SplitAfter(fullName, " ")
+
+	if len(names) > 1 {
+		for _, name := range ordinaryNames {
+			if name == strings.TrimSpace(names[0]) {
+				return string(names[1][:1])
+			}
+		}
+	}
+
+	return string(names[0][:1])
+}
+
 // Advanced Unicode normalization and filtering,
 // see http://blog.golang.org/normalization and
 // http://godoc.org/golang.org/x/text/unicode/norm for more

@@ -72,3 +72,21 @@ func TestIsValidSex(t *testing.T) {
 		t.Errorf("invalid sex %t", isValid)
 	}
 }
+
+func TestGetInitial(t *testing.T) {
+	if initial := getInitial("maria"); initial != "M" {
+		t.Errorf("error %s", initial)
+	}
+	if initial := getInitial("maria isabel"); initial != "I" {
+		t.Errorf("error %s", initial)
+	}
+	if initial := getInitial("maria jose"); initial != "J" {
+		t.Errorf("error %s", initial)
+	}
+	if initial := getInitial("maria fernanda"); initial != "F" {
+		t.Errorf("error %s", initial)
+	}
+	if initial := getInitial("maria angelica"); initial != "A" {
+		t.Errorf("error %s", initial)
+	}
+}
