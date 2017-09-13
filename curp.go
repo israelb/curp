@@ -66,28 +66,14 @@ func (c curp) generate() string {
 	// call all the methods here
 	var curp bytes.Buffer
 
-	// year, birthDate := getBirthDate(c.birthDate)
-	// homonimia := getHomonimia(year)
-
-	// posicion_1_4 = [
-	// 	primera_letra_paterno,
-	// 	vocal_apellido,
-	// 	primera_letra_materno,
-	// 	inicial_nombre
-	//   ].join('');
 	firstLastName := validFirstLastName(c.firstLastName)
 
 	p01 := getInitial(firstLastName)
-	p02 := getFirstVocal(firstLastName)
+	p02 := getFirstVowel(firstLastName)
 	p03 := getInitial(c.secondLastName)
 	p04 := getInitial(c.name)
 	_, birthDate := getBirthDate(c.birthDate)
 	// homonimia := getHomonimia(year)
-
-	// curp.WriteString(getInitial(c.firstLastName))
-	// curp.WriteString(getFirstVocal(c.firstLastName))
-	// curp.WriteString(getInitial(c.secondLastName))
-	// curp.WriteString(getInitial(c.name))
 
 	pos1_4 := filterInappropriateWord(p01 + p02 + p03 + p04)
 	curp.WriteString(pos1_4)
@@ -226,7 +212,7 @@ func validInitial(initial string) string {
 	return word
 }
 
-func getFirstVocal(word string) string {
+func getFirstVowel(word string) string {
 	word = strings.ToUpper(word)
 	word = word[1:len(word)]
 	var reConstant = regexp.MustCompile(`[BCDFGHJKLMNÑPQRSTVWXYZ]`)
@@ -243,9 +229,18 @@ func getFirstVocal(word string) string {
 
 func getFirstConsonant(word string) string {
 	word = strings.ToUpper(word)
-	var re = regexp.MustCompile(`[AEIOU]`)
+	word = word[1:len(word)]
+	var reVowel = regexp.MustCompile(`[AEIOU]`)
+	var reConstant = regexp.MustCompile(`[BCDFGHJKLMNÑPQRSTVWXYZ]`)
+	var eneEr = regexp.MustCompile(`(^Ñ)`)
 
-	consonant := re.ReplaceAllString(word, "${1}")
+	consonant := reVowel.ReplaceAllString(word, "${1}")
+
+	if reConstant.FindStringIndex(consonant) == nil {
+		return "X"
+	}
+
+	consonant = eneEr.ReplaceAllString(consonant, "${2}X")
 
 	return string(consonant[0])
 }

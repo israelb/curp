@@ -129,35 +129,44 @@ func TestGetHomonimia(t *testing.T) {
 		t.Error("error!")
 	}
 }
-func TestGetFirstVocal(t *testing.T) {
-	if h := getFirstVocal("LOPEZ"); h != "O" {
+func TestGetFirstVowel(t *testing.T) {
+	if h := getFirstVowel("LOPEZ"); h != "O" {
 		t.Error("error!")
 	}
-	if h := getFirstVocal("ROMERO"); h != "O" {
+	if h := getFirstVowel("ROMERO"); h != "O" {
 		t.Error("error!")
 	}
-	if h := getFirstVocal("ICH"); h != "X" {
+	if h := getFirstVowel("ICH"); h != "X" {
 		t.Errorf("error! %s", h)
 	}
-	if h := getFirstVocal("ILL"); h != "X" {
+	if h := getFirstVowel("ILL"); h != "X" {
 		t.Errorf("error! %s", h)
 	}
-	if h := getFirstVocal("ACEVES"); h != "E" {
+	if h := getFirstVowel("ACEVES"); h != "E" {
 		t.Errorf("error! %s", h)
 	}
-	if h := getFirstVocal("BARBA"); h != "A" {
+	if h := getFirstVowel("BARBA"); h != "A" {
 		t.Errorf("error! %s", h)
 	}
-	if h := getFirstVocal("HALL"); h != "A" {
+	if h := getFirstVowel("HALL"); h != "A" {
 		t.Errorf("error! %s", h)
 	}
-	// if h := getFirstVocal("D/AMICO"); h != "X" {
+	// if h := getFirstVowel("D/AMICO"); h != "X" {
 	// 	t.Errorf("error! %s", h)
 	// }
 }
 func TestGetFirstConsonant(t *testing.T) {
-	if h := getFirstConsonant("LOPEZ"); h != "L" {
-		t.Error("error!")
+	if consonant := getFirstConsonant("ALBERTO"); consonant != "L" {
+		t.Errorf("error! %s", consonant)
+	}
+	if consonant := getFirstConsonant("RODRIGUEZ"); consonant != "D" {
+		t.Errorf("error! %s", consonant)
+	}
+	if consonant := getFirstConsonant("OÑATE"); consonant != "X" {
+		t.Errorf("error! %s", consonant)
+	}
+	if consonant := getFirstConsonant("PO"); consonant != "X" {
+		t.Errorf("error! %s", consonant)
 	}
 }
 
