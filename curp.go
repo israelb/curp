@@ -1,6 +1,7 @@
 package curp
 
 import (
+	"bytes"
 	"regexp"
 	"strconv"
 	"strings"
@@ -39,7 +40,8 @@ type curp struct {
 	secondLastName string
 	sex            string
 	stateCode      string
-	birthDate      string
+	// year, month, day (xxxx-xx-xx)
+	birthDate string
 
 	// Optional, It values is used in order to avoid duplicates, it is assign by the Goverment.
 	// By default is 0 if the datebirth is smaller or equal to 1999, or the value is A if the value is greatest than 2000
@@ -47,7 +49,7 @@ type curp struct {
 }
 
 // NewCurp generates a new curp
-func NewCurp(name, firstLastName, secondLastName, sex, stateCode, birthDate string) {
+func NewCurp(name, firstLastName, secondLastName, sex, stateCode, birthDate string) string {
 	curp := &curp{
 		name:           name,
 		firstLastName:  firstLastName,
@@ -57,11 +59,62 @@ func NewCurp(name, firstLastName, secondLastName, sex, stateCode, birthDate stri
 		birthDate:      birthDate,
 	}
 
-	curp.generate()
+	return curp.generate()
 }
 
 func (c curp) generate() string {
-	return c.birthDate
+	// call all the methods here
+	var curp bytes.Buffer
+
+	// year, birthDate := getBirthDate(c.birthDate)
+	// homonimia := getHomonimia(year)
+
+	// posicion_1_4 = [
+	// 	primera_letra_paterno,
+	// 	vocal_apellido,
+	// 	primera_letra_materno,
+	// 	inicial_nombre
+	//   ].join('');
+	firstLastName := validFirstLastName(c.firstLastName)
+
+	p01 := getInitial(firstLastName)
+	p02 := getFirstVocal(firstLastName)
+	p03 := getInitial(c.secondLastName)
+	p04 := getInitial(c.name)
+	_, birthDate := getBirthDate(c.birthDate)
+	// homonimia := getHomonimia(year)
+
+	// curp.WriteString(getInitial(c.firstLastName))
+	// curp.WriteString(getFirstVocal(c.firstLastName))
+	// curp.WriteString(getInitial(c.secondLastName))
+	// curp.WriteString(getInitial(c.name))
+
+	pos1_4 := filterInappropriateWord(p01 + p02 + p03 + p04)
+	curp.WriteString(pos1_4)
+	curp.WriteString(birthDate)
+
+	if isValidSex(c.sex) {
+		curp.WriteString(c.sex)
+	}
+
+	if validState(c.stateCode) {
+		curp.WriteString(c.stateCode)
+	}
+
+	// posicion_14_16 = [
+	// 	primerConsonante(param.apellido_paterno),
+	// 	primerConsonante(param.apellido_materno),
+	// 	primerConsonante(nombre_a_usar)
+	//   ].join('');
+
+	return curp.String()
+}
+
+func validFirstLastName(firstLastName string) string {
+	firstLastName = strings.ToUpper(firstLastName)
+	firstLastNames := strings.SplitAfter(firstLastName, " ")
+
+	return strings.Replace(firstLastNames[0], " ", "", -1)
 }
 
 func filterInappropriateWord(word string) string {
@@ -150,16 +203,70 @@ func isValidSex(sex string) bool {
 func getInitial(fullName string) string {
 	fullName = strings.ToUpper(fullName)
 	names := strings.SplitAfter(fullName, " ")
+	var word string
 
 	if len(names) > 1 {
 		for _, name := range ordinaryNames {
 			if name == strings.TrimSpace(names[0]) {
-				return string(names[1][:1])
+				word = validInitial(names[1])
+				return word[:1]
 			}
 		}
 	}
 
-	return string(names[0][:1])
+	word = validInitial(names[0])
+
+	return word[:1]
+}
+
+func validInitial(initial string) string {
+	myInitial := strings.ToUpper(initial)
+	var re = regexp.MustCompile(`(^Ñ)`)
+	word := re.ReplaceAllString(myInitial, "${2}X")
+	return word
+}
+
+func getFirstVocal(word string) string {
+	word = strings.ToUpper(word)
+	word = word[1:len(word)]
+	var reConstant = regexp.MustCompile(`[BCDFGHJKLMNÑPQRSTVWXYZ]`)
+	var reVowel = regexp.MustCompile(`[AEIOU]`)
+
+	vowels := reConstant.ReplaceAllString(word, "${1}")
+
+	if reVowel.FindStringIndex(word) == nil {
+		return "X"
+	}
+
+	return string(vowels[0])
+}
+
+func getFirstConsonant(word string) string {
+	word = strings.ToUpper(word)
+	var re = regexp.MustCompile(`[AEIOU]`)
+
+	consonant := re.ReplaceAllString(word, "${1}")
+
+	return string(consonant[0])
+}
+
+func getBirthDate(birthDate string) (int, string) {
+	var date bytes.Buffer
+	splited := strings.Split(birthDate, "-")
+	year, _ := strconv.Atoi(splited[0])
+
+	date.WriteString(splited[0][2:])
+	date.WriteString(splited[1])
+	date.WriteString(splited[2])
+
+	return year, date.String()
+}
+
+func getHomonimia(year int) string {
+	if year > 1999 {
+		return "A"
+	}
+	return "0"
 }
 
 // Advanced Unicode normalization and filtering,

@@ -4,6 +4,10 @@ import (
 	"testing"
 )
 
+// func TestNewCurp(t *testing.T) {
+// 	t.Errorf("invalid word %s", word)
+// }
+
 func TestWord(t *testing.T) {
 	var RightWords = [...]string{"BXCA", "LXCO", "BXEI", "BXEY", "MXME", "CXCA", "MXMO",
 		"CXCO", "MXAR", "CXGA", "MXAS", "CXGO", "MXON", "CXKA", "MXAR", "CXKO", "MXON",
@@ -80,6 +84,9 @@ func TestGetInitial(t *testing.T) {
 	if initial := getInitial("maria isabel"); initial != "I" {
 		t.Errorf("error %s", initial)
 	}
+	if initial := getInitial("maria luis"); initial != "L" {
+		t.Errorf("error %s", initial)
+	}
 	if initial := getInitial("maria jose"); initial != "J" {
 		t.Errorf("error %s", initial)
 	}
@@ -89,4 +96,76 @@ func TestGetInitial(t *testing.T) {
 	if initial := getInitial("maria angelica"); initial != "A" {
 		t.Errorf("error %s", initial)
 	}
+	if initial := getInitial("ÑANDO"); initial != "X" {
+		t.Errorf("error %s", initial)
+	}
+	if initial := getInitial("Maria ÑANDO"); initial != "X" {
+		t.Errorf("error %s", initial)
+	}
+}
+
+//BAAI810809HJCRCS02
+func TestValidFirstLastName(t *testing.T) {
+	if firstLastName := validFirstLastName("lopez"); firstLastName != "LOPEZ" {
+		t.Error("error!")
+	}
+	if firstLastName := validFirstLastName("RIVA PALACIO"); firstLastName != "RIVA" {
+		t.Errorf("error! %s", firstLastName)
+	}
+}
+func TestGetBirthDate(t *testing.T) {
+	year, birthDateFormatted := getBirthDate("1981-08-09")
+
+	if year != 1981 && birthDateFormatted != "810809" {
+		t.Error("error!")
+	}
+}
+func TestGetHomonimia(t *testing.T) {
+	if h := getHomonimia(1981); h != "0" {
+		t.Error("error!")
+	}
+
+	if h := getHomonimia(2000); h != "A" {
+		t.Error("error!")
+	}
+}
+func TestGetFirstVocal(t *testing.T) {
+	if h := getFirstVocal("LOPEZ"); h != "O" {
+		t.Error("error!")
+	}
+	if h := getFirstVocal("ROMERO"); h != "O" {
+		t.Error("error!")
+	}
+	if h := getFirstVocal("ICH"); h != "X" {
+		t.Errorf("error! %s", h)
+	}
+	if h := getFirstVocal("ILL"); h != "X" {
+		t.Errorf("error! %s", h)
+	}
+	if h := getFirstVocal("ACEVES"); h != "E" {
+		t.Errorf("error! %s", h)
+	}
+	if h := getFirstVocal("BARBA"); h != "A" {
+		t.Errorf("error! %s", h)
+	}
+	if h := getFirstVocal("HALL"); h != "A" {
+		t.Errorf("error! %s", h)
+	}
+	// if h := getFirstVocal("D/AMICO"); h != "X" {
+	// 	t.Errorf("error! %s", h)
+	// }
+}
+func TestGetFirstConsonant(t *testing.T) {
+	if h := getFirstConsonant("LOPEZ"); h != "L" {
+		t.Error("error!")
+	}
+}
+
+func TestNewCurp(t *testing.T) {
+	if curp := NewCurp("Israel", "barba", "Aceves", "H", "JC", "1981-08-09"); curp != "BAAI810809HJC" {
+		t.Errorf("error curp %s", curp)
+	}
+	// if curp := NewCurp("Israel", "barba", "Aceves", "H", "JC", "1981-08-09"); curp != "BAAI810809HJCRCS02" {
+	// 	t.Error("error curp")
+	// }
 }
