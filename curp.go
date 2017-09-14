@@ -2,6 +2,8 @@ package curp
 
 import (
 	"bytes"
+	"errors"
+	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -66,34 +68,53 @@ func (c curp) generate() string {
 	// call all the methods here
 	var curp bytes.Buffer
 
-	firstLastName := validFirstLastName(c.firstLastName)
+	year, birthDate := getBirthDate(c.birthDate)
+	homonimia := getHomonimia(year)
 
+	curp.WriteString(c.getFirstFourInitials())
+	curp.WriteString(birthDate)
+	curp.WriteString(c.getSex())
+	curp.WriteString(c.getState())
+	curp.WriteString(c.getConsonants())
+	curp.WriteString(homonimia)
+	curp.WriteString(addVerifiedDigit(curp.String()))
+
+	return curp.String()
+}
+
+func (c curp) getSex() string {
+	sex, errSex := isValidSex(c.sex)
+	if errSex != nil {
+		log.Fatal(errSex)
+	}
+	return sex
+}
+
+func (c curp) getState() string {
+	state, errState := validState(c.stateCode)
+	if errState != nil {
+		log.Fatal(errState)
+	}
+	return state
+}
+
+func (c curp) getConsonants() string {
+	firstLastName := validFirstLastName(c.firstLastName)
+	p14 := getFirstConsonant(firstLastName)
+	p15 := getFirstConsonant(c.secondLastName)
+	p16 := getFirstConsonant(c.name)
+
+	return p14 + p15 + p16
+}
+
+func (c curp) getFirstFourInitials() string {
+	firstLastName := validFirstLastName(c.firstLastName)
 	p01 := getInitial(firstLastName)
 	p02 := getFirstVowel(firstLastName)
 	p03 := getInitial(c.secondLastName)
 	p04 := getInitial(c.name)
-	_, birthDate := getBirthDate(c.birthDate)
-	// homonimia := getHomonimia(year)
 
-	pos1_4 := filterInappropriateWord(p01 + p02 + p03 + p04)
-	curp.WriteString(pos1_4)
-	curp.WriteString(birthDate)
-
-	if isValidSex(c.sex) {
-		curp.WriteString(c.sex)
-	}
-
-	if validState(c.stateCode) {
-		curp.WriteString(c.stateCode)
-	}
-
-	// posicion_14_16 = [
-	// 	primerConsonante(param.apellido_paterno),
-	// 	primerConsonante(param.apellido_materno),
-	// 	primerConsonante(nombre_a_usar)
-	//   ].join('');
-
-	return curp.String()
+	return p01 + p02 + p03 + p04
 }
 
 func validFirstLastName(firstLastName string) string {
@@ -162,25 +183,24 @@ func addVerifiedDigit(curp string) string {
 	return strconv.Itoa(digit)
 }
 
-func validState(state string) bool {
+func validState(state string) (string, error) {
 	state = strings.ToUpper(state)
-
-	isValid := false
 
 	for _, num := range codeStates {
 		if num == state {
-			isValid = true
+			// isValid = true
+			return state, nil
 		}
 	}
 
-	return isValid
+	return "", errors.New("State is invalid")
 }
 
-func isValidSex(sex string) bool {
+func isValidSex(sex string) (string, error) {
 	if sex == "M" || sex == "H" {
-		return true
+		return sex, nil
 	}
-	return false
+	return "", errors.New("Sex initial is invalid, you have to use M or H")
 }
 
 // Funcion que extrae la inicial del primer nombre, o, si tiene mas de 1 nombre Y el primer

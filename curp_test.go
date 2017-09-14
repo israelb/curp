@@ -4,10 +4,6 @@ import (
 	"testing"
 )
 
-// func TestNewCurp(t *testing.T) {
-// 	t.Errorf("invalid word %s", word)
-// }
-
 func TestWord(t *testing.T) {
 	var RightWords = [...]string{"BXCA", "LXCO", "BXEI", "BXEY", "MXME", "CXCA", "MXMO",
 		"CXCO", "MXAR", "CXGA", "MXAS", "CXGO", "MXON", "CXKA", "MXAR", "CXKO", "MXON",
@@ -66,14 +62,27 @@ func TestStripCtlAndExtFromUnicode(t *testing.T) {
 }
 
 func TestIsValidSex(t *testing.T) {
-	if isValid := isValidSex("M"); isValid != true {
-		t.Errorf("invalid sex %t", isValid)
+	t.Log("validating sexs")
+
+	if _, errSex := isValidSex("M"); errSex != nil {
+		t.Errorf("invalid sex")
 	}
-	if isValid := isValidSex("H"); isValid != true {
-		t.Errorf("invalid sex %t", isValid)
+	if _, errSex := isValidSex("H"); errSex != nil {
+		t.Errorf("invalid sex")
 	}
-	if isValid := isValidSex("X"); isValid != false {
-		t.Errorf("invalid sex %t", isValid)
+	if _, errSex := isValidSex("X"); errSex.Error() != "Sex initial is invalid, you have to use M or H" {
+		t.Error(errSex)
+	}
+}
+
+func TestValidState(t *testing.T) {
+	t.Log("validating states")
+
+	if _, errState := validState("JC"); errState != nil {
+		t.Errorf("invalid state")
+	}
+	if _, errState := validState("X"); errState.Error() != "State is invalid" {
+		t.Error(errState)
 	}
 }
 
@@ -171,7 +180,7 @@ func TestGetFirstConsonant(t *testing.T) {
 }
 
 func TestNewCurp(t *testing.T) {
-	if curp := NewCurp("Israel", "barba", "Aceves", "H", "JC", "1981-08-09"); curp != "BAAI810809HJC" {
+	if curp := NewCurp("Israel", "barba", "Aceves", "H", "JC", "1981-08-09"); curp != "BAAI810809HJCRCS02" {
 		t.Errorf("error curp %s", curp)
 	}
 	// if curp := NewCurp("Israel", "barba", "Aceves", "H", "JC", "1981-08-09"); curp != "BAAI810809HJCRCS02" {
