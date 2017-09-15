@@ -225,17 +225,26 @@ func validInitial(initial string) string {
 }
 
 func getFirstVowel(word string) string {
+	_, err := validStrangerChar(word)
+	if err != nil {
+		return "X"
+	}
+
 	r := regexp.MustCompile("[A-z]([AEIOU])")
 	match := r.FindStringSubmatch(word)
 
 	if len(match) < 2 {
 		return "X"
 	}
-
 	return match[1]
 }
 
 func getFirstConsonant(word string) string {
+	_, err := validStrangerChar(word)
+	if err != nil {
+		return "X"
+	}
+
 	r := regexp.MustCompile("[A-z]([BCDFGHJKLMNÑPQRSTVWXYZ])")
 	match := r.FindStringSubmatch(word)
 
@@ -244,6 +253,17 @@ func getFirstConsonant(word string) string {
 	}
 
 	return match[1]
+}
+
+func validStrangerChar(word string) (string, error) {
+	exceptions := regexp.MustCompile("[\\/|\\-\\.]")
+	match := exceptions.FindStringIndex(word)
+
+	if match == nil {
+		return word, nil
+	}
+
+	return "X", errors.New("Char no valid, contains (/ - .) ")
 }
 
 func getBirthDate(birthDate string) (int, string) {

@@ -160,10 +160,18 @@ func TestGetFirstVowel(t *testing.T) {
 	if h := getFirstVowel("HALL"); h != "A" {
 		t.Errorf("error! %s", h)
 	}
-	// if h := getFirstVowel("D/AMICO"); h != "X" {
-	// 	t.Errorf("error! %s", h)
-	// }
+	if h := getFirstVowel("D/AMICO"); h != "X" {
+		t.Errorf("error! %s", h)
+	}
+	if h := getFirstVowel("D-AMICO"); h != "X" {
+		t.Errorf("error! %s", h)
+	}
+	if h := getFirstVowel("D.AMICO"); h != "X" {
+		t.Errorf("error! %s", h)
+	}
 }
+
+// func BenchmarkFirstVowel1(b *testing.B) { BenchmarkFirstVowel(b) }
 func TestGetFirstConsonant(t *testing.T) {
 	if consonant := getFirstConsonant("ALBERTO"); consonant != "L" {
 		t.Errorf("error! %s", consonant)
@@ -177,6 +185,9 @@ func TestGetFirstConsonant(t *testing.T) {
 	if consonant := getFirstConsonant("PO"); consonant != "X" {
 		t.Errorf("error! %s", consonant)
 	}
+	if consonant := getFirstConsonant("D/NAMO"); consonant != "X" {
+		t.Errorf("error! %s", consonant)
+	}
 }
 
 func TestNewCurp(t *testing.T) {
@@ -186,4 +197,10 @@ func TestNewCurp(t *testing.T) {
 	// if curp := NewCurp("Israel", "barba", "Aceves", "H", "JC", "1981-08-09"); curp != "BAAI810809HJCRCS02" {
 	// 	t.Error("error curp")
 	// }
+}
+
+func BenchmarkCurp(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		NewCurp("Israel", "barba", "Aceves", "H", "JC", "1981-08-09")
+	}
 }
