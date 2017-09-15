@@ -1,10 +1,11 @@
 package curp
 
 import (
+	"strings"
 	"testing"
 )
 
-func TestWord(t *testing.T) {
+func TestFilterInappropriateWord(t *testing.T) {
 	var RightWords = [...]string{"BXCA", "LXCO", "BXEI", "BXEY", "MXME", "CXCA", "MXMO",
 		"CXCO", "MXAR", "CXGA", "MXAS", "CXGO", "MXON", "CXKA", "MXAR", "CXKO", "MXON",
 		"CXGE", "MXCO", "CXGI", "MXKO", "CXJA", "MXLA", "CXJE", "MXLO", "CXJI", "NXCA",
@@ -122,6 +123,14 @@ func TestValidFirstLastName(t *testing.T) {
 		t.Errorf("error! %s", firstLastName)
 	}
 }
+func TestIsConpoundNameInvalid(t *testing.T) {
+	if word := isConpoundNameInvalid("MC GREGOR"); word != true {
+		t.Errorf("error %t", word)
+	}
+	if word := isConpoundNameInvalid("del romo"); word != true {
+		t.Errorf("error %t", word)
+	}
+}
 func TestGetBirthDate(t *testing.T) {
 	year, birthDateFormatted := getBirthDate("1981-08-09")
 
@@ -194,9 +203,21 @@ func TestNewCurp(t *testing.T) {
 	if curp := NewCurp("Israel", "barba", "Aceves", "H", "JC", "1981-08-09"); curp != "BAAI810809HJCRCS02" {
 		t.Errorf("error curp %s", curp)
 	}
-	// if curp := NewCurp("Israel", "barba", "Aceves", "H", "JC", "1981-08-09"); curp != "BAAI810809HJCRCS02" {
-	// 	t.Error("error curp")
-	// }
+}
+
+func TestGetFirstFourInitials(t *testing.T) {
+	curp := &curp{
+		name:           strings.ToUpper("carlos"),
+		firstLastName:  strings.ToUpper("mc gregor"),
+		secondLastName: strings.ToUpper("lopez"),
+		sex:            strings.ToUpper("H"),
+		stateCode:      strings.ToUpper("jc"),
+		birthDate:      strings.ToUpper("1981-08-09"),
+	}
+
+	if result := curp.getFirstFourInitials(); result != "GELC" {
+		t.Errorf("error 4 initials, expected: %s, and get: %s", "GELC", result)
+	}
 }
 
 func BenchmarkCurp(b *testing.B) {

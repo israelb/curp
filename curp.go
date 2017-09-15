@@ -33,7 +33,8 @@ var (
 	characteresDigitVerified = [...]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E",
 		"F", "G", "H", "I", "J", "K", "L", "M", "N", "Ñ", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
 
-	conpoundNames = [...]string{"DA", "DAS", "DE", "DEL", "DER", "DI", "DIE", "DD", "EL", "LA", "LOS", "LAS", "LE", "LES", "MAC", "MC", "VAN", "VON", "Y"}
+	conpoundNames = [...]string{"DA", "DAS", "DE", "DEL", "DER", "DI", "DIE", "DD", "EL", "LA", "LOS", "LAS", "LE",
+		"LES", "MAC", "MC", "VAN", "VON", "Y"}
 )
 
 type curp struct {
@@ -113,12 +114,32 @@ func (c curp) getFirstFourInitials() string {
 	initials.WriteString(getInitial(c.secondLastName))
 	initials.WriteString(getInitial(c.name))
 
-	return initials.String()
+	return filterInappropriateWord(initials.String())
 }
 
 func validFirstLastName(firstLastName string) string {
 	firstLastNames := strings.SplitAfter(firstLastName, " ")
-	return strings.Replace(firstLastNames[0], " ", "", -1)
+
+	firstWord := strings.Replace(firstLastNames[0], " ", "", -1)
+
+	if isConpoundNameInvalid(firstWord) {
+		return strings.Replace(firstLastNames[1], " ", "", -1)
+	}
+
+	return firstWord
+}
+
+func isConpoundNameInvalid(word string) bool {
+	wordSplited := strings.SplitAfter(word, " ")
+	first := strings.Replace(wordSplited[0], " ", "", -1)
+
+	for _, compoundName := range conpoundNames {
+		// fmt.Printf("word: %s, compoundName: %s \n", wordSplited[0], compoundName)
+		if strings.ToUpper(first) == compoundName {
+			return true
+		}
+	}
+	return false
 }
 
 func filterInappropriateWord(word string) string {
