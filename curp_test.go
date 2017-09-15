@@ -115,7 +115,7 @@ func TestGetInitial(t *testing.T) {
 
 //BAAI810809HJCRCS02
 func TestValidFirstLastName(t *testing.T) {
-	if firstLastName := validFirstLastName("lopez"); firstLastName != "LOPEZ" {
+	if firstLastName := validFirstLastName("lopez"); firstLastName != "lopez" {
 		t.Error("error!")
 	}
 	if firstLastName := validFirstLastName("RIVA PALACIO"); firstLastName != "RIVA" {

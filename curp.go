@@ -53,19 +53,18 @@ type curp struct {
 // NewCurp generates a new curp
 func NewCurp(name, firstLastName, secondLastName, sex, stateCode, birthDate string) string {
 	curp := &curp{
-		name:           name,
-		firstLastName:  firstLastName,
-		secondLastName: secondLastName,
-		sex:            sex,
-		stateCode:      stateCode,
-		birthDate:      birthDate,
+		name:           strings.ToUpper(name),
+		firstLastName:  strings.ToUpper(firstLastName),
+		secondLastName: strings.ToUpper(secondLastName),
+		sex:            strings.ToUpper(sex),
+		stateCode:      strings.ToUpper(stateCode),
+		birthDate:      strings.ToUpper(birthDate),
 	}
 
 	return curp.generate()
 }
 
 func (c curp) generate() string {
-	// call all the methods here
 	var curp bytes.Buffer
 
 	year, birthDate := getBirthDate(c.birthDate)
@@ -99,33 +98,30 @@ func (c curp) getState() string {
 }
 
 func (c curp) getConsonants() string {
-	firstLastName := validFirstLastName(c.firstLastName)
-	p14 := getFirstConsonant(firstLastName)
-	p15 := getFirstConsonant(c.secondLastName)
-	p16 := getFirstConsonant(c.name)
+	var initials bytes.Buffer
+	initials.WriteString(getFirstConsonant(validFirstLastName(c.firstLastName)))
+	initials.WriteString(getFirstConsonant(c.secondLastName))
+	initials.WriteString(getFirstConsonant(c.name))
 
-	return p14 + p15 + p16
+	return initials.String()
 }
 
 func (c curp) getFirstFourInitials() string {
-	firstLastName := validFirstLastName(c.firstLastName)
-	p01 := getInitial(firstLastName)
-	p02 := getFirstVowel(firstLastName)
-	p03 := getInitial(c.secondLastName)
-	p04 := getInitial(c.name)
+	var initials bytes.Buffer
+	initials.WriteString(getInitial(validFirstLastName(c.firstLastName)))
+	initials.WriteString(getFirstVowel(validFirstLastName(c.firstLastName)))
+	initials.WriteString(getInitial(c.secondLastName))
+	initials.WriteString(getInitial(c.name))
 
-	return p01 + p02 + p03 + p04
+	return initials.String()
 }
 
 func validFirstLastName(firstLastName string) string {
-	firstLastName = strings.ToUpper(firstLastName)
 	firstLastNames := strings.SplitAfter(firstLastName, " ")
-
 	return strings.Replace(firstLastNames[0], " ", "", -1)
 }
 
 func filterInappropriateWord(word string) string {
-	word = strings.ToUpper(word)
 	var re = regexp.MustCompile(`^(\w)\w`)
 
 	for _, w := range inappropriateWords {
@@ -184,11 +180,8 @@ func addVerifiedDigit(curp string) string {
 }
 
 func validState(state string) (string, error) {
-	state = strings.ToUpper(state)
-
 	for _, num := range codeStates {
 		if num == state {
-			// isValid = true
 			return state, nil
 		}
 	}
@@ -226,43 +219,31 @@ func getInitial(fullName string) string {
 }
 
 func validInitial(initial string) string {
-	myInitial := strings.ToUpper(initial)
 	var re = regexp.MustCompile(`(^Ñ)`)
-	word := re.ReplaceAllString(myInitial, "${2}X")
+	word := re.ReplaceAllString(initial, "${2}X")
 	return word
 }
 
 func getFirstVowel(word string) string {
-	word = strings.ToUpper(word)
-	word = word[1:len(word)]
-	var reConstant = regexp.MustCompile(`[BCDFGHJKLMNÑPQRSTVWXYZ]`)
-	var reVowel = regexp.MustCompile(`[AEIOU]`)
+	r := regexp.MustCompile("[A-z]([AEIOU])")
+	match := r.FindStringSubmatch(word)
 
-	vowels := reConstant.ReplaceAllString(word, "${1}")
-
-	if reVowel.FindStringIndex(word) == nil {
+	if len(match) < 2 {
 		return "X"
 	}
 
-	return string(vowels[0])
+	return match[1]
 }
 
 func getFirstConsonant(word string) string {
-	word = strings.ToUpper(word)
-	word = word[1:len(word)]
-	var reVowel = regexp.MustCompile(`[AEIOU]`)
-	var reConstant = regexp.MustCompile(`[BCDFGHJKLMNÑPQRSTVWXYZ]`)
-	var eneEr = regexp.MustCompile(`(^Ñ)`)
+	r := regexp.MustCompile("[A-z]([BCDFGHJKLMNÑPQRSTVWXYZ])")
+	match := r.FindStringSubmatch(word)
 
-	consonant := reVowel.ReplaceAllString(word, "${1}")
-
-	if reConstant.FindStringIndex(consonant) == nil {
+	if len(match) < 2 || match[1] == "Ñ" {
 		return "X"
 	}
 
-	consonant = eneEr.ReplaceAllString(consonant, "${2}X")
-
-	return string(consonant[0])
+	return match[1]
 }
 
 func getBirthDate(birthDate string) (int, string) {
