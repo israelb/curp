@@ -200,9 +200,23 @@ func TestGetFirstConsonant(t *testing.T) {
 }
 
 func TestNewCurp(t *testing.T) {
-	if curp := NewCurp("Israel", "barba", "Aceves", "H", "JC", "1981-08-09"); curp != "BAAI810809HJCRCS02" {
+	if curp, _ := NewCurp("Israel", "barba", "Aceves", "H", "JC", "1981-08-09"); curp != "BAAI810809HJCRCS02" {
 		t.Errorf("error curp %s", curp)
 	}
+
+	if _, err := NewCurp("Israel", "barba", "Aceves", "NOVALID", "JC", "1981-08-09"); err.Error() != "Sex initial is invalid, you have to use M or H" {
+		t.Errorf("error curp %s", err.Error())
+	}
+
+	// _, err := NewCurp("Israel", "barba", "Aceves", "W", "JC", "1981-08-09")
+
+	// if err != nil {
+	// 	t.Errorf("error curp %s", err.Error())
+	// }
+
+	// if _, errState := validState("X"); errState.Error() != "State is invalid" {
+	// 	t.Error(errState)
+	// }
 }
 
 func TestGetFirstFourInitials(t *testing.T) {

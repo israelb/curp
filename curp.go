@@ -52,8 +52,8 @@ type curp struct {
 }
 
 // NewCurp generates a new curp
-func NewCurp(name, firstLastName, secondLastName, sex, stateCode, birthDate string) string {
-	curp := &curp{
+func NewCurp(name, firstLastName, secondLastName, sex, stateCode, birthDate string) (string, error) {
+	c := &curp{
 		name:           strings.ToUpper(name),
 		firstLastName:  strings.ToUpper(firstLastName),
 		secondLastName: strings.ToUpper(secondLastName),
@@ -62,32 +62,44 @@ func NewCurp(name, firstLastName, secondLastName, sex, stateCode, birthDate stri
 		birthDate:      strings.ToUpper(birthDate),
 	}
 
-	return curp.generate()
+	generatedCurp, errCurp := c.generate()
+
+	if errCurp != nil {
+		return "", errCurp
+	}
+
+	return generatedCurp, nil
 }
 
-func (c curp) generate() string {
-	var curp bytes.Buffer
+func (c curp) generate() (string, error) {
+	var join bytes.Buffer
 
 	year, birthDate := getBirthDate(c.birthDate)
 	homonimia := getHomonimia(year)
 
-	curp.WriteString(c.getFirstFourInitials())
-	curp.WriteString(birthDate)
-	curp.WriteString(c.getSex())
-	curp.WriteString(c.getState())
-	curp.WriteString(c.getConsonants())
-	curp.WriteString(homonimia)
-	curp.WriteString(addVerifiedDigit(curp.String()))
+	join.WriteString(c.getFirstFourInitials())
+	join.WriteString(birthDate)
 
-	return curp.String()
+	sex, sexErr := c.getSex()
+	if sexErr != nil {
+		return "", sexErr
+	}
+	join.WriteString(sex)
+
+	join.WriteString(c.getState())
+	join.WriteString(c.getConsonants())
+	join.WriteString(homonimia)
+	join.WriteString(addVerifiedDigit(join.String()))
+
+	return join.String(), nil
 }
 
-func (c curp) getSex() string {
+func (c curp) getSex() (string, error) {
 	sex, errSex := isValidSex(c.sex)
 	if errSex != nil {
-		log.Fatal(errSex)
+		return "", errSex
 	}
-	return sex
+	return sex, nil
 }
 
 func (c curp) getState() string {
