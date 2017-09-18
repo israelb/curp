@@ -3,7 +3,6 @@ package curp
 import (
 	"bytes"
 	"errors"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -11,6 +10,8 @@ import (
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
 )
+
+//https://github.com/wmark/caddy.upload/blob/master/upload.go
 
 var (
 	ordinaryNames = [...]string{"MARIA", "MA", "MA.", "JOSE", "J", "J."}
@@ -51,6 +52,16 @@ type curp struct {
 	homonimia string
 }
 
+const (
+	errStateInvalid curpError = "State is invalid"
+	errSexInvalid   curpError = "Sex initial is invalid, you have to use M or H"
+)
+
+type curpError string
+
+// Error implements the error interface.
+func (e curpError) Error() string { return string(e) }
+
 // NewCurp generates a new curp
 func NewCurp(name, firstLastName, secondLastName, sex, stateCode, birthDate string) (string, error) {
 	c := &curp{
@@ -86,7 +97,12 @@ func (c curp) generate() (string, error) {
 	}
 	join.WriteString(sex)
 
-	join.WriteString(c.getState())
+	state, stateErr := c.getState()
+	if stateErr != nil {
+		return "", stateErr
+	}
+	join.WriteString(state)
+
 	join.WriteString(c.getConsonants())
 	join.WriteString(homonimia)
 	join.WriteString(addVerifiedDigit(join.String()))
@@ -102,12 +118,12 @@ func (c curp) getSex() (string, error) {
 	return sex, nil
 }
 
-func (c curp) getState() string {
+func (c curp) getState() (string, error) {
 	state, errState := validState(c.stateCode)
 	if errState != nil {
-		log.Fatal(errState)
+		return "", errState
 	}
-	return state
+	return state, nil
 }
 
 func (c curp) getConsonants() string {
@@ -146,7 +162,6 @@ func isConpoundNameInvalid(word string) bool {
 	first := strings.Replace(wordSplited[0], " ", "", -1)
 
 	for _, compoundName := range conpoundNames {
-		// fmt.Printf("word: %s, compoundName: %s \n", wordSplited[0], compoundName)
 		if strings.ToUpper(first) == compoundName {
 			return true
 		}
@@ -219,14 +234,14 @@ func validState(state string) (string, error) {
 		}
 	}
 
-	return "", errors.New("State is invalid")
+	return "", errStateInvalid
 }
 
 func isValidSex(sex string) (string, error) {
 	if sex == "M" || sex == "H" {
 		return sex, nil
 	}
-	return "", errors.New("Sex initial is invalid, you have to use M or H")
+	return "", errSexInvalid
 }
 
 // Funcion que extrae la inicial del primer nombre, o, si tiene mas de 1 nombre Y el primer

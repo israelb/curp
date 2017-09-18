@@ -208,15 +208,9 @@ func TestNewCurp(t *testing.T) {
 		t.Errorf("error curp %s", err.Error())
 	}
 
-	// _, err := NewCurp("Israel", "barba", "Aceves", "W", "JC", "1981-08-09")
-
-	// if err != nil {
-	// 	t.Errorf("error curp %s", err.Error())
-	// }
-
-	// if _, errState := validState("X"); errState.Error() != "State is invalid" {
-	// 	t.Error(errState)
-	// }
+	if _, err := NewCurp("Israel", "barba", "Aceves", "H", "novalid", "1981-08-09"); err.Error() != "State is invalid" {
+		t.Errorf("error curp %s", err.Error())
+	}
 }
 
 func TestGetFirstFourInitials(t *testing.T) {
