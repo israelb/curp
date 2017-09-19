@@ -2,6 +2,13 @@
 
 This is a little library for getting a CURP.
 
+# Instalation
+
+```shell
+# download the go-apex package
+go get -v github.com/apex/go-apex
+```
+
 # How to use it
 You need to use the public method: NewCurp
 
