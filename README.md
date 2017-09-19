@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/israelb/curp.svg?branch=master)](https://travis-ci.org/israelb/curp)
+
 # CURP
 
 This is a little library for getting a CURP.
