@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/israelb/curp.svg?branch=master)](https://travis-ci.org/israelb/curp)
+[![Coverage Status](https://coveralls.io/repos/github/israelb/curp/badge.svg?branch=master)](https://coveralls.io/github/israelb/curp?branch=master)
 
 # CURP
 
