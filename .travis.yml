@@ -10,6 +10,9 @@ go:
 before_install:
   - go get golang.org/x/text/transform
   - go get golang.org/x/text/unicode/norm
+  - go get golang.org/x/tools/cmd/cover
+  - go get github.com/mattn/goveralls
 
 script:
   - go test -v -covermode=count -coverprofile=coverage.out
+  - $HOME/gopath/bin/goveralls -service=travis-ci -coverprofile=coverage.out 
